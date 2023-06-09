@@ -313,7 +313,6 @@
             this.button9.TabIndex = 2;
             this.button9.Text = "Обраная матрица";
             this.button9.UseVisualStyleBackColor = true;
-            this.button9.UseWaitCursor = true;
             this.button9.Click += new System.EventHandler(this.button9_Click);
             // 
             // button8
@@ -325,7 +324,6 @@
             this.button8.TabIndex = 3;
             this.button8.Text = "Транспонирование";
             this.button8.UseVisualStyleBackColor = true;
-            this.button8.UseWaitCursor = true;
             this.button8.Click += new System.EventHandler(this.button8_Click);
             // 
             // button10
@@ -337,7 +335,6 @@
             this.button10.TabIndex = 4;
             this.button10.Text = "Ранг матрицы";
             this.button10.UseVisualStyleBackColor = true;
-            this.button10.UseWaitCursor = true;
             this.button10.Click += new System.EventHandler(this.button10_Click);
             // 
             // button11
@@ -349,7 +346,6 @@
             this.button11.TabIndex = 5;
             this.button11.Text = "Определитель";
             this.button11.UseVisualStyleBackColor = true;
-            this.button11.UseWaitCursor = true;
             this.button11.Click += new System.EventHandler(this.button11_Click);
             // 
             // button12
@@ -361,7 +357,6 @@
             this.button12.TabIndex = 6;
             this.button12.Text = "Минор элемента";
             this.button12.UseVisualStyleBackColor = true;
-            this.button12.UseWaitCursor = true;
             this.button12.Click += new System.EventHandler(this.button12_Click);
             // 
             // button13
@@ -373,7 +368,6 @@
             this.button13.TabIndex = 7;
             this.button13.Text = "Умножить на число";
             this.button13.UseVisualStyleBackColor = true;
-            this.button13.UseWaitCursor = true;
             this.button13.Click += new System.EventHandler(this.button13_Click);
             // 
             // groupBox3

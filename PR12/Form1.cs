@@ -7,8 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using MathNet.Numerics.LinearAlgebra;
-using MathNet.Numerics.LinearAlgebra.Complex;
+
 
 namespace PR12
 {
@@ -85,16 +84,26 @@ namespace PR12
             // Determine the number of rows and columns in the DataGridView
             int numRows = dgv.Rows.Count;
             int numCols = dgv.Columns.Count;
+            Console.WriteLine(numRows.ToString() + " " + numCols.ToString());
 
             // Loop through each row and column to set the cell data
             for (int i = 0; i < numRows; i++)
             {
                 for (int j = 0; j < numCols; j++)
                 {
-                    dgv.Rows[i].Cells[j].Value = data[i, j];
+                    // Check if the current index is within the bounds of the data array
+                    if (i < data.GetLength(0) && j < data.GetLength(1))
+                    {
+                        dgv.Rows[i].Cells[j].Value = data[i, j];
+                    }
+                    else
+                    {
+                        Console.WriteLine("Error: Index out of bounds - i=" + i.ToString() + ", j=" + j.ToString());
+                    }
                 }
             }
         }
+
 
         private void ClearAllCells(DataGridView dgv)
         {
@@ -351,13 +360,9 @@ namespace PR12
             // Get a matrix from the DataGridView
             double[,] matrix = GetDataGridViewData(mat_A);
 
-            // Calculate the rank of the matrix using SVD (Singular Value Decomposition)
-            Matrix<double> matrix_ = Matrix<double>.Build.DenseOfArray(matrix);
-            int rank = matrix_.Rank();
-
 
             // Create a new 1x1 result array containing the rank of the matrix
-            matrix[0, 0] = rank;
+            matrix[0, 0] = GetMatrixRank(matrix);
 
             // Set the result DataGridView to contain the rank of the matrix
             SetDataGridViewData(result, matrix);
@@ -393,6 +398,102 @@ namespace PR12
             return result;
         }
 
+        public static double CalculateDeterminant(double[,] matrix)
+        {
+            int n = matrix.GetLength(0);
+    
+            if (n == 1)
+            {
+                return matrix[0, 0];
+            }
+            else if (n == 2)
+            {
+                return matrix[0, 0] * matrix[1, 1] - matrix[0, 1] * matrix[1, 0];
+            }
+            else if (n == 3)
+            {
+                return matrix[0, 0] * (matrix[1, 1] * matrix[2, 2] - matrix[2, 1] * matrix[1, 2]) 
+                     - matrix[0, 1] * (matrix[1, 0] * matrix[2, 2] - matrix[2, 0] * matrix[1, 2])
+                     + matrix[0, 2] * (matrix[1, 0] * matrix[2, 1] - matrix[2, 0] * matrix[1, 1]);
+            }
+            else
+            {
+                throw new ArgumentException("Matrix order not supported");
+            }
+        }
+
+
+        public static int GetMatrixRank(double[,] matrix)
+        {
+            int numRows = matrix.GetLength(0);
+            int numCols = matrix.GetLength(1);
+
+            // Perform row reduction using Gaussian elimination
+            for (int i = 0; i < numRows; i++)
+            {
+                int pivotRow = i;
+                while (pivotRow < numRows && matrix[pivotRow, i] == 0)
+                {
+                    pivotRow++;
+                }
+
+                if (pivotRow == numRows)
+                {
+                    break;
+                }
+
+                if (pivotRow != i)
+                {
+                    // Swap rows
+                    for (int j = 0; j < numCols; j++)
+                    {
+                        double temp = matrix[i, j];
+                        matrix[i, j] = matrix[pivotRow, j];
+                        matrix[pivotRow, j] = temp;
+                    }
+                }
+
+                double pivot = matrix[i, i];
+
+                for (int j = i + 1; j < numRows; j++)
+                {
+                    double factor = matrix[j, i] / pivot;
+
+                    for (int k = i + 1; k < numCols; k++)
+                    {
+                        matrix[j, k] -= factor * matrix[i, k];
+                    }
+
+                    matrix[j, i] = 0;
+                }
+            }
+
+            int rank = numRows;
+
+            // Count number of non-zero rows
+            for (int i = 0; i < numRows; i++)
+            {
+                bool isZeroRow = true;
+
+                for (int j = 0; j < numCols; j++)
+                {
+                    if (matrix[i, j] != 0)
+                    {
+                        isZeroRow = false;
+                        break;
+                    }
+                }
+
+                if (isZeroRow)
+                {
+                    rank--;
+                }
+            }
+
+            return rank;
+        }
+
+
 
 
         private void button11_Click(object sender, EventArgs e)
@@ -400,9 +501,7 @@ namespace PR12
             // Get a matrix from the DataGridView
             double[,] matrix = GetDataGridViewData(mat_A);
 
-            // Calculate the rank of the matrix using SVD (Singular Value Decomposition)
-            Matrix<double> matrix_ = Matrix<double>.Build.DenseOfArray(matrix);
-            double determ = matrix_.Determinant();
+            double determ = CalculateDeterminant(matrix);
 
 
             // Create a new 1x1 result array containing the rank of the matrix
@@ -438,5 +537,7 @@ namespace PR12
         {
             Application.Exit();
         }
+
+
     }
 }
